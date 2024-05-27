@@ -745,7 +745,12 @@ public class ConvoscopeService extends SmartGlassesAndroidService {
             updateAdhdSummaries(adhdStmbResults);
             String dynamicSummary = adhdStmbResults.getJSONObject(0).getString("summary");
             String [] adhdResults = calculateAdhdStmbStringFormatted(getAdhdStmbSummaries());
-            sendRowsCard(adhdResults);
+            //pack it into a string since we're using text wall now
+            String textWallString = Arrays.stream(adhdResults)
+                    .reduce((a, b) -> b + "\n\n" + a)
+                    .orElse("");
+            sendTextWall(textWallString);
+//            sendRowsCard(adhdResults);
 //            sendTextToSpeech("欢迎使用安卓文本到语音转换功能", "chinese");
 //            Log.d(TAG, "GOT THAT ONEEEEEEEE:");
 //            Log.d(TAG, String.join("\n", llResults));
