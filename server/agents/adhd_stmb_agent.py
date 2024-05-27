@@ -21,10 +21,10 @@ You will receive 2 transcripts. The 'Context Transcript' is the entire recent co
 
 The 'Recent Transcript' is the most recent part of 'Context Transcript' since the last topic change.
 
-Your role is:
-1. Output a boolean if the 'Recent Transcript' topic has recently changed, using both the 'Context Transcript' AND the 'Previous Summary' to decide. Be strict about what you judge as topic changes: only detect significant topic changes, not very subtle ones. A new topic should only be detected toward the end of the 'Recent Transcript' if (1) the new topic summary is significantly different from the 'Previous Summary' (not another phrase to describe it, for example), (2) the topic has changed within the larger conversation context of the 'Context Transcript', and (3) there is a fair amount of text (3+ sentences) in the 'Recent Transcript' before the topic change.
-2. If the topic has changed, output the three words that delineate where in the 'Recent Transcript' the topic changed. Make sure those three words appear *exactly* as they appear in the input transcript (including punctuation, capitalization, etc.). 
-3. Output a summary of the 'Recent Transcript'. If the topic changed during the Recent Transcript, summarize only the text *after* the topic change.
+Instructions:
+1. Output a boolean if the 'Recent Transcript' topic has recently changed (which means that at the start of the recent transcript, there was a topic being discussed, and the topic has now shifted to something new). Use both the 'Context Transcript' AND the 'Previous Summary' to decide.  A new topic shift should only be detected toward the end of the 'Recent Transcript' if (a) the new topic summary is significantly different from the 'Previous Summary' (not just another phrase to describe it, for example), (b) the topic has changed within the larger conversation context of the 'Context Transcript', and (c) there is a fair amount of text (3+ sentences) in the 'Recent Transcript' before the topic shift.
+2. If the topic has shifted, output the three words that delineate where in the 'Recent Transcript' the topic changed. Make sure those three words appear *exactly* as they appear in the input transcript (including punctuation, capitalization, etc.). 
+3. Output a summary of the 'Recent Transcript'. If the previous summary is still accurate, use that. But if more information has come in such that there isn't a topic shift but you can make a better summary, then make a new, better summary. If the topic changed during the Recent Transcript, summarize only the text *after* the topic shift.
 
 Output a 1 to 4 word summary of the input conversation text according to the given format.
 
@@ -39,16 +39,17 @@ Previous Summary:
 
 Output Format: {format_instructions}
 
-Don't output punctuation or periods (do not include ?.,;) in your summary! Output all lowercase summaries! Your summary should be 1-4 words, don't output more than 4 words! Now provide the output:"""
+Don't output punctuation or periods (do not include ?.,;) in your summary! Your summary should be 1-4 words. Now provide the output:"""
 
 #If the current summary of the 'Recent Transcript' is still correct, just re-output the current summary, don't output a new one.
+#Be strict about what you judge as topic changes: only detect significant topic changes, not very subtle ones.
 
 @time_function()
 def run_adhd_stmb_agent(to_summarize_transcript, context_transcript, previous_summary):
     # start up GPT3 connection
     #llm = get_langchain_gpt35(temperature=0.2, max_tokens=512)
-    # start up GPT4 connection
-    llm = get_langchain_gpt4(temperature=0.2, max_tokens=48)
+    # start up GPT4o connection
+    llm = get_langchain_gpt4o(temperature=0.2, max_tokens=100)
 
     class AdhdStmbAgentQuery(BaseModel):
         """

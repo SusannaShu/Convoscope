@@ -141,7 +141,6 @@ async def load_recording_handler(request):
 
 
 async def set_user_settings(request):
-    print("\nENTER SET USER SETTINGS")
     body = await request.json()
     target_language = body.get('target_language')
     id_token = body.get('Authorization')
